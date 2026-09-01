@@ -1,1 +1,12 @@
-{"name":"CleanControl","short_name":"CleanControl","lang":"ar","dir":"rtl","start_url":"./","display":"standalone","background_color":"#eef3f8","theme_color":"#0b2a55","description":"نظام إدارة جولات النظافة والملاحظات والتقييم - Globe Williams International"}
+{
+  "name":"CleanControl",
+  "short_name":"CleanControl",
+  "description":"نظام إدارة جولات النظافة والملاحظات والتقييم",
+  "lang":"ar",
+  "dir":"rtl",
+  "start_url":"./",
+  "scope":"./",
+  "display":"standalone",
+  "background_color":"#eef3f8",
+  "theme_color":"#0b2a55"
+}

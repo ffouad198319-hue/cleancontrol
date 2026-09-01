@@ -23,6 +23,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Validate JavaScript
+        run: |
+          node --check core.js
+          node --check rounds.js
+          node --check notes.js
+          node --check admin.js
+          node --check reports.js
+          node --check boot.js
+          node --check sw.js
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:

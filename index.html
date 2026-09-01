@@ -12,7 +12,7 @@
 *{box-sizing:border-box}:root{--navy:#0b2a55;--blue:#1264df;--bg:#eef3f8;--text:#182235;--muted:#657084;--green:#19733c;--red:#b42318;--amber:#a15c00}
 body{margin:0;font-family:Arial,Tahoma,sans-serif;background:var(--bg);color:var(--text)}
 header{position:sticky;top:0;z-index:20;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;box-shadow:0 2px 10px #0002}
-.brand{display:flex;align-items:center;gap:10px}.brand img{width:50px;height:50px;object-fit:contain;background:#fff;border-radius:10px;padding:2px}.brand b{font-size:20px}.brand small{display:block;opacity:.8}
+.brand{display:flex;align-items:center;gap:10px}.brand b{font-size:20px}.brand small{display:block;opacity:.8}
 #netState{font-size:12px;padding:6px 9px;border-radius:999px;background:#ffffff22}#netState.offline{background:#b42318}
 .wrap{max-width:1180px;margin:auto;padding:14px}.card{background:#fff;border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 3px 14px #00000012}.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
 h1,h2,h3,p{margin-top:0}button,input,select,textarea{font:inherit}input,select,textarea{width:100%;padding:11px 12px;border:1px solid #ccd6e2;border-radius:10px;background:#fff}textarea{min-height:80px;resize:vertical}button{border:0;border-radius:10px;padding:11px 14px;font-weight:700;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:var(--blue);color:#fff}.dark{background:var(--navy);color:#fff}.secondary{background:#e6edf7;color:var(--navy)}.danger{background:#c62828;color:#fff}.success{background:#e9f6ed;color:#176a36;border:1px solid #93c9a4}.warn{background:#fff4d8;color:#755100;border:1px solid #eccb79}
@@ -21,7 +21,7 @@ nav{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}nav button{background
 .table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:650px}td,th{border:1px solid #d1d8e3;padding:8px;text-align:right;vertical-align:top}th{background:#edf2f8}.actions{display:flex;gap:6px;flex-wrap:wrap}.actions button{padding:7px 9px;font-size:12px}.check-days{display:flex;gap:8px;flex-wrap:wrap}.check-days label{display:flex;align-items:center;gap:5px;border:1px solid #d5deea;border-radius:10px;padding:7px 9px}.check-days input{width:auto}.progress{height:8px;background:#e6ebf2;border-radius:99px;overflow:hidden}.progress span{display:block;height:100%;background:var(--blue)}
 .print-only{display:none}#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#172033;color:#fff;padding:11px 16px;border-radius:10px;z-index:60;display:none;max-width:90%;box-shadow:0 5px 20px #0004}
 .modal{position:fixed;inset:0;background:#0008;z-index:50;display:flex;align-items:center;justify-content:center;padding:15px}.modal .box{background:#fff;border-radius:16px;padding:18px;width:min(560px,100%);max-height:90vh;overflow:auto}
-@media(max-width:720px){.wrap{padding:9px}.row2,.row3{grid-template-columns:1fr}header{padding:8px 10px}.brand img{width:42px;height:42px}.brand b{font-size:18px}button{min-height:44px}nav{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}nav button{white-space:nowrap}}
+@media(max-width:720px){.wrap{padding:9px}.row2,.row3{grid-template-columns:1fr}header{padding:8px 10px}.brand b{font-size:18px}button{min-height:44px}nav{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}nav button{white-space:nowrap}}
 @media print{body{background:#fff}header,nav,.no-print,#toast,.modal{display:none!important}.wrap{max-width:none;padding:0}.card{box-shadow:none;border:0;padding:0;margin:0}#view>*:not(.print-target){display:none!important}.print-target{display:block!important}.print-only{display:block}table{min-width:0;font-size:11px}td,th{padding:5px}}
 </style>
 </head>
@@ -32,5 +32,5 @@ nav{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}nav button{background
 <div id="app" class="hidden"><nav id="nav"></nav><main id="view"></main></div>
 </div>
 <div id="toast"></div><div id="modalRoot"></div>
-<script src="app.js"></script>
+<script src="core.js"></script><script src="rounds.js"></script><script src="notes.js"></script><script src="admin.js"></script><script src="reports.js"></script><script src="boot.js"></script>
 </body></html>

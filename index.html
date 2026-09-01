@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b2a55">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest">
+<title>CleanControl</title>
+<style>
+*{box-sizing:border-box}:root{--navy:#0b2a55;--blue:#1264df;--bg:#eef3f8;--text:#182235;--muted:#657084;--green:#19733c;--red:#b42318;--amber:#a15c00}
+body{margin:0;font-family:Arial,Tahoma,sans-serif;background:var(--bg);color:var(--text)}
+header{position:sticky;top:0;z-index:20;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;box-shadow:0 2px 10px #0002}
+.brand{display:flex;align-items:center;gap:10px}.brand img{width:50px;height:50px;object-fit:contain;background:#fff;border-radius:10px;padding:2px}.brand b{font-size:20px}.brand small{display:block;opacity:.8}
+#netState{font-size:12px;padding:6px 9px;border-radius:999px;background:#ffffff22}#netState.offline{background:#b42318}
+.wrap{max-width:1180px;margin:auto;padding:14px}.card{background:#fff;border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 3px 14px #00000012}.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+h1,h2,h3,p{margin-top:0}button,input,select,textarea{font:inherit}input,select,textarea{width:100%;padding:11px 12px;border:1px solid #ccd6e2;border-radius:10px;background:#fff}textarea{min-height:80px;resize:vertical}button{border:0;border-radius:10px;padding:11px 14px;font-weight:700;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:var(--blue);color:#fff}.dark{background:var(--navy);color:#fff}.secondary{background:#e6edf7;color:var(--navy)}.danger{background:#c62828;color:#fff}.success{background:#e9f6ed;color:#176a36;border:1px solid #93c9a4}.warn{background:#fff4d8;color:#755100;border:1px solid #eccb79}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.metric{background:#f6f8fb;border-radius:14px;padding:14px;border:1px solid #e3e9f1}.metric b{display:block;font-size:26px;color:var(--navy);margin-top:5px}.small{font-size:12px;color:var(--muted)}.muted{color:var(--muted)}.hidden{display:none!important}.badge{display:inline-block;border-radius:999px;padding:4px 9px;font-size:12px;background:#e7eef8;color:var(--navy)}.badge.red{background:#fde8e7;color:#a61b13}.badge.green{background:#e6f5eb;color:#176a36}.badge.amber{background:#fff2d9;color:#8a5800}
+nav{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}nav button{background:#dfe8f4;color:var(--navy)}nav button.active{background:var(--navy);color:#fff}.item{border:1px solid #dce4ed;border-radius:14px;padding:13px;margin:10px 0}.status{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.ok{background:#e8f7ec;color:#146c2e;border:2px solid #79c38f}.bad{background:#fff0f0;color:#a51414;border:2px solid #e49a9a}.selected{outline:3px solid #1b64d8;outline-offset:1px}.notice{padding:12px;border-radius:12px;background:#fff4d8;border:1px solid #f0cf7b}.error{padding:12px;border-radius:12px;background:#fde8e7;color:#991b1b;border:1px solid #f2aaa5}.successbox{padding:12px;border-radius:12px;background:#e9f6ed;color:#176a36;border:1px solid #93c9a4}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:650px}td,th{border:1px solid #d1d8e3;padding:8px;text-align:right;vertical-align:top}th{background:#edf2f8}.actions{display:flex;gap:6px;flex-wrap:wrap}.actions button{padding:7px 9px;font-size:12px}.check-days{display:flex;gap:8px;flex-wrap:wrap}.check-days label{display:flex;align-items:center;gap:5px;border:1px solid #d5deea;border-radius:10px;padding:7px 9px}.check-days input{width:auto}.progress{height:8px;background:#e6ebf2;border-radius:99px;overflow:hidden}.progress span{display:block;height:100%;background:var(--blue)}
+.print-only{display:none}#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#172033;color:#fff;padding:11px 16px;border-radius:10px;z-index:60;display:none;max-width:90%;box-shadow:0 5px 20px #0004}
+.modal{position:fixed;inset:0;background:#0008;z-index:50;display:flex;align-items:center;justify-content:center;padding:15px}.modal .box{background:#fff;border-radius:16px;padding:18px;width:min(560px,100%);max-height:90vh;overflow:auto}
+@media(max-width:720px){.wrap{padding:9px}.row2,.row3{grid-template-columns:1fr}header{padding:8px 10px}.brand img{width:42px;height:42px}.brand b{font-size:18px}button{min-height:44px}nav{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}nav button{white-space:nowrap}}
+@media print{body{background:#fff}header,nav,.no-print,#toast,.modal{display:none!important}.wrap{max-width:none;padding:0}.card{box-shadow:none;border:0;padding:0;margin:0}#view>*:not(.print-target){display:none!important}.print-target{display:block!important}.print-only{display:block}table{min-width:0;font-size:11px}td,th{padding:5px}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div style="width:50px;height:50px;border-radius:10px;background:#fff;color:#0b2a55;display:grid;place-items:center;font-weight:800">GW</div><div><b>CleanControl</b><small>Globe Williams International</small></div></div><div id="netState">متصل</div></header>
+<div class="wrap">
+<div id="loginCard" class="card" style="max-width:430px;margin:35px auto"><div style="text-align:center"><div style="width:88px;height:88px;margin:0 auto 12px;border-radius:18px;background:#0b2a55;color:#fff;display:grid;place-items:center;font-size:28px;font-weight:800">GW</div><h2>تسجيل الدخول</h2><p class="small">نظام الجولات والملاحظات والتقييم</p></div><input id="loginUser" placeholder="اسم المستخدم" autocomplete="username"><div style="height:8px"></div><input id="loginPass" type="password" placeholder="كلمة المرور" autocomplete="current-password"><div style="height:10px"></div><button id="loginBtn" class="primary" style="width:100%">دخول</button><div id="loginMsg" class="small" style="margin-top:10px"></div></div>
+<div id="app" class="hidden"><nav id="nav"></nav><main id="view"></main></div>
+</div>
+<div id="toast"></div><div id="modalRoot"></div>
+<script src="app.js"></script>
+</body></html>

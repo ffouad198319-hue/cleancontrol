@@ -29,6 +29,7 @@ jobs:
           node --check rounds.js
           node --check notes.js
           node --check admin.js
+          node --check schedule-ui.js
           node --check reports.js
           node --check boot.js
           node --check sw.js

@@ -1,4 +1,4 @@
-const CACHE='cleancontrol-v14-20260902-operations-accounts';
+const CACHE='cleancontrol-v15-20260902-reports-round-details';
 const SHELL=['./','./index.html','./core.js','./rounds.js','./notes.js','./admin.js','./schedule-ui.js','./deep-cleaning.js','./deep-cleaning-print.js','./reports.js','./print-branding.js','./globe-williams-logo.svg','./boot.js','./manifest.webmanifest'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));

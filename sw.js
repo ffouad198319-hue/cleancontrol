@@ -1,5 +1,5 @@
-const CACHE='cleancontrol-v17-20260906-account-management-fix';
-const SHELL=['./','./index.html','./core.js','./rounds.js','./notes.js','./admin.js','./schedule-ui.js','./deep-cleaning.js','./deep-cleaning-print.js','./reports.js','./print-branding.js','./globe-williams-logo.svg','./nav-fix.js','./accounts-fix.js','./boot.js','./manifest.webmanifest'];
+const CACHE='cleancontrol-v18-20260907-round-save-hardening';
+const SHELL=['./','./index.html','./core.js','./rounds.js','./round-save-fix.js','./notes.js','./admin.js','./schedule-ui.js','./deep-cleaning.js','./deep-cleaning-print.js','./reports.js','./print-branding.js','./globe-williams-logo.svg','./nav-fix.js','./boot.js','./manifest.webmanifest'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const u=new URL(e.request.url);if(u.origin!==location.origin)return;e.respondWith(fetch(e.request,{cache:'no-store'}).then(r=>{const c=r.clone();caches.open(CACHE).then(x=>x.put(e.request,c));return r}).catch(()=>caches.match(e.request).then(r=>r||caches.match('./index.html'))))});

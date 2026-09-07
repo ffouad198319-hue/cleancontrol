@@ -1,12 +1,37 @@
-// CleanControl round-save hardening layer.
-// Persists each completed round locally before attempting server submission,
-// prevents duplicate taps, and keeps failed submissions queued for later sync.
+// CleanControl round-save hardening layer v19.
+// Local-first persistence, server-side validation refresh, one safe retry,
+// duplicate-tap protection, and detailed failure handling without data loss.
 (function(){
   function setSaveButtonState(disabled,label){
     const btn=document.querySelector('button[onclick="saveRound()"]');
     if(!btn)return;
     btn.disabled=disabled;
     if(label)btn.textContent=label;
+  }
+
+  async function validateRoundContext(payload){
+    const fresh=await api('bootstrap');
+    boot=fresh;
+    me=fresh.user||me;
+    const b=(fresh.buildings||[]).find(x=>x.code===payload.building_code);
+    if(!b)throw new Error('هذا المبنى غير مسند لهذا المشرف أو لم يعد متاحًا. يرجى الرجوع للإدارة.');
+    const f=(b.floors||[]).find(x=>String(x.label)===String(payload.floor_label));
+    if(!f)throw new Error('هذا الطابق غير متاح لهذا المشرف حاليًا. يرجى الرجوع للإدارة.');
+    return true;
+  }
+
+  async function submitWithRecovery(payload,offlineSource){
+    try{
+      await validateRoundContext(payload);
+      return await sendQueuedRound(payload,offlineSource);
+    }catch(firstErr){
+      const retryable=firstErr?.status>=500||/الخادم|server|استجابة غير صالحة|تعذر تنفيذ الطلب/i.test(firstErr?.message||'');
+      if(!retryable)throw firstErr;
+      // Refresh account/assignment/checklist context once, then retry the same idempotent payload.
+      await new Promise(r=>setTimeout(r,450));
+      await validateRoundContext(payload);
+      return await sendQueuedRound(payload,offlineSource);
+    }
   }
 
   window.saveRound=async function(){
@@ -34,41 +59,43 @@
         client_uuid:r.client_uuid||crypto.randomUUID(),
         results
       };
+      r.client_uuid=payload.client_uuid;
 
-      // Local-first: write before any network operation so the round cannot be lost.
       await queuePut(payload);
       await updatePending();
-      if(msg)msg.innerHTML='<span class="badge amber">تم حفظ الجولة على الهاتف — جاري إرسالها للسيرفر</span>';
+      if(msg)msg.innerHTML='<span class="badge amber">تم حفظ الجولة على الهاتف — جاري التحقق والإرسال للسيرفر</span>';
 
       if(!navigator.onLine){
-        toast('تم حفظ الجولة على الهاتف وستتم المزامنة عند عودة الإنترنت');
-        setTimeout(home,900);
+        if(msg)msg.innerHTML='<span class="badge amber">الجولة محفوظة على الهاتف — بانتظار الإنترنت للمزامنة</span>';
+        toast('تم حفظ الجولة على الهاتف ولن تضيع');
+        setTimeout(home,1200);
         return;
       }
 
       try{
-        await sendQueuedRound(payload,false);
+        const saved=await submitWithRecovery(payload,false);
         await queueDel(payload.client_uuid);
         await updatePending();
         if(msg)msg.innerHTML='<span class="badge green">تم حفظ الجولة على السيرفر بنجاح</span>';
         toast('تم حفظ الجولة بنجاح');
-        setTimeout(home,700);
+        setTimeout(home,900);
+        return saved;
       }catch(sendErr){
-        // Keep queue item intact. Do not lose the completed round.
         await updatePending();
-        if(msg)msg.innerHTML='<span class="badge amber">الجولة محفوظة على الهاتف وبانتظار المزامنة</span>';
-        toast('تعذر الإرسال الآن؛ الجولة محفوظة ولن تضيع');
-        setTimeout(home,1000);
+        const detail=sendErr?.message||'حدث خطأ غير معروف أثناء الإرسال';
+        if(msg)msg.innerHTML=`<div class="notice"><b>الجولة محفوظة على الهاتف ولن تضيع.</b><br><span class="small">تعذر الحفظ على السيرفر: ${esc(detail)}</span><br><span class="small">سيتم إعادة المحاولة تلقائيًا عند توفر الاتصال. لا تعِد تنفيذ الجولة.</span></div>`;
+        toast('الجولة محفوظة محليًا — فشل إرسالها للسيرفر');
+        setSaveButtonState(false,'إعادة محاولة الإرسال');
+        return;
       }
     }catch(e){
-      if(msg)msg.textContent=e?.message||'تعذر حفظ الجولة';
+      if(msg)msg.innerHTML=`<div class="error">${esc(e?.message||'تعذر حفظ الجولة')}</div>`;
       setSaveButtonState(false,'حفظ الجولة');
     }finally{
       window._ccRoundSaving=false;
     }
   };
 
-  // Safer queue sync: only delete local copy after confirmed server save.
   window.syncQueue=async function(){
     if(syncing||!navigator.onLine||!token)return;
     syncing=true;
@@ -76,10 +103,9 @@
       const all=await queueAll();
       for(const p of all){
         try{
-          await sendQueuedRound(p,true);
+          await submitWithRecovery(p,true);
           await queueDel(p.client_uuid);
         }catch(e){
-          // Leave failed round in queue and continue with the rest.
           console.warn('CleanControl sync pending',p?.client_uuid,e?.message||e);
         }
       }

@@ -1,4 +1,4 @@
-const CACHE='cleancontrol-v20-20260907-round-save-diagnostics';
+const CACHE='cleancontrol-v21-20260909-company-logo';
 const SHELL=['./','./index.html','./core.js','./rounds.js','./round-save-fix.js','./notes.js','./admin.js','./schedule-ui.js','./deep-cleaning.js','./deep-cleaning-print.js','./reports.js','./print-branding.js','./globe-williams-logo.svg','./nav-fix.js','./boot.js','./manifest.webmanifest'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));

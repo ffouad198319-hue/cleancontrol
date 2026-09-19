@@ -1,4 +1,4 @@
-const CC_COMPANY_LOGO='https://www.globewilliams.com/wp-content/uploads/2023/02/globe_wiliams_logo%402x.png';
+const CC_COMPANY_LOGO='globe-williams-logo.svg';
 function ccApplyCompanyLogo(img){if(!img)return;img.src=CC_COMPANY_LOGO;img.alt='Globe Williams International';img.onerror=function(){this.onerror=null;this.src='globe-williams-logo.svg'}}
 function ccEnsurePrintBranding(){document.querySelectorAll('.print-only').forEach(box=>{let img=box.querySelector('[data-company-print-logo]');if(!img){img=document.createElement('img');img.className='company-logo print-logo';img.setAttribute('data-company-print-logo','1');box.prepend(img)}ccApplyCompanyLogo(img)})}
 function ccEnsureScreenBranding(){document.querySelectorAll('.company-logo').forEach(ccApplyCompanyLogo)}

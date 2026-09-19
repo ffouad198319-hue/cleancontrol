@@ -1,4 +1,4 @@
-name: Repair embedded original logo once
+name: Finish original logo replacement once
 on:
   push:
     branches: [main]
@@ -7,32 +7,34 @@ on:
 permissions:
   contents: write
 jobs:
-  repair:
+  apply:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Repair and validate original pixels
+      - name: Verify and use the original logo everywhere
         run: |
           python - <<'PY'
           from pathlib import Path
-          import re, base64, hashlib
-          p = Path('globe-williams-logo.svg')
-          s = p.read_text()
-          before = 'sf2uyl7ZkiF5YpGBe'
-          after = 'sf2uyll7ZkiF5YpGBe'
-          assert s.count(before) == 1, 'Unexpected logo contents; refusing to change'
-          s = s.replace(before, after)
-          encoded = re.search(r'data:image/webp;base64,([^\"]+)', s).group(1)
-          decoded = base64.b64decode(encoded, validate=True)
-          assert hashlib.sha256(decoded).hexdigest() == '90f390a98c0248e180cf830a39f8030c2aed0da24d844c0610bf547da316a7d7', 'Logo data does not match original lossless image'
-          assert len(decoded) == 20730
-          p.write_text(s)
-          print('Verified byte-for-byte original lossless WebP image; repaired embedded logo')
+          import re,base64,hashlib
+          p=Path('globe-williams-logo.svg')
+          text=p.read_text()
+          assert hashlib.sha1(b'blob '+str(len(text.encode())).encode()+b'\0'+text.encode()).hexdigest()=='748111c51bb8fea37c9583d6b7502cf7bc771370', 'Logo differs from verified original; refusing to edit app'
+          data=base64.b64decode(re.search(r'data:image/webp;base64,([^\"]+)',text).group(1),validate=True)
+          assert hashlib.sha256(data).hexdigest()=='90f390a98c0248e180cf830a39f8030c2aed0da24d844c0610bf547da316a7d7'
+          remote='https://www.globewilliams.com/wp-content/uploads/2023/02/globe_wiliams_logo%402x.png'
+          for name in ('index.html','print-branding.js'):
+              f=Path(name);s=f.read_text();assert remote in s,(name,'unexpected logo source');f.write_text(s.replace(remote,'globe-williams-logo.svg'))
+          f=Path('deep-cleaning-print.js');s=f.read_text();needle="const logo='"+remote+"',fallback=";assert needle in s;f.write_text(s.replace(needle,"const logo=new URL('globe-williams-logo.svg',location.href).href,fallback="))
+          f=Path('sw.js');s=f.read_text();assert "cleancontrol-v21-20260909-company-logo" in s;f.write_text(s.replace('cleancontrol-v21-20260909-company-logo','cleancontrol-v22-20260919-original-logo'))
+          print('Verified pixel-identical original image; updated login, header, print, cache')
           PY
-      - name: Commit verified repair
+          node --check print-branding.js
+          node --check deep-cleaning-print.js
+          node --check sw.js
+      - name: Commit verified branding
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add globe-williams-logo.svg
-          git commit -m 'Fix embedded original logo transfer and verify exact pixels'
+          git add index.html print-branding.js deep-cleaning-print.js sw.js
+          git commit -m 'Use original Globe Williams logo in app and print; refresh cache'
           git push

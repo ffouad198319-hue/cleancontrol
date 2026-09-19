@@ -1,0 +1,38 @@
+name: Repair embedded original logo once
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/repair-original-logo-once.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Repair and validate original pixels
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re, base64, hashlib
+          p = Path('globe-williams-logo.svg')
+          s = p.read_text()
+          before = 'sf2uyl7ZkiF5YpGBe'
+          after = 'sf2uyll7ZkiF5YpGBe'
+          assert s.count(before) == 1, 'Unexpected logo contents; refusing to change'
+          s = s.replace(before, after)
+          encoded = re.search(r'data:image/webp;base64,([^\"]+)', s).group(1)
+          decoded = base64.b64decode(encoded, validate=True)
+          assert hashlib.sha256(decoded).hexdigest() == '90f390a98c0248e180cf830a39f8030c2aed0da24d844c0610bf547da316a7d7', 'Logo data does not match original lossless image'
+          assert len(decoded) == 20730
+          p.write_text(s)
+          print('Verified byte-for-byte original lossless WebP image; repaired embedded logo')
+          PY
+      - name: Commit verified repair
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add globe-williams-logo.svg
+          git commit -m 'Fix embedded original logo transfer and verify exact pixels'
+          git push
